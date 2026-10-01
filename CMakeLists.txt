@@ -138,6 +138,7 @@ target_link_libraries(${APP_NAME}
 	Framework
 	glfw
 	${OPENGL_LIBRARIES}
+	xinput
 )
 
 # Specify include directories.
