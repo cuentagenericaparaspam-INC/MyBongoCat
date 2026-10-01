@@ -18,7 +18,7 @@ public:
 			   bool breath,bool eyeBlink, const char *ModelName,
 			   bool track, const char *modelPath, bool _live2d,
 			   bool relative_mouse, bool _isMouseHorizontalFlip,
-			   bool _isMouseVerticalFlip, bool _isUsemask);
+			   bool _isMouseVerticalFlip, bool _isUsemask, int trackingDevice);
 
 	static const char **GetModeDefine(int &_size);
 

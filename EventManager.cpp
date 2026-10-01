@@ -25,6 +25,11 @@ EventManager::EventManager()
     , _relativemouseY(0)
     ,_leftButton(false)
     ,_rightButton(false)
+    ,_xboxStickX(0.0f)
+    ,_xboxStickY(0.0f)
+    ,_xboxConnected(false)
+    ,_xboxLeftTrigger(false)
+    ,_xboxRightTrigger(false)
 {
 	for (int i = 0; i < KEYAMOUT; i++)
 		_keyEvent[i].KeyBoardSignal = false;
@@ -116,6 +121,16 @@ void EventManager::RightButtonDown() {
 
 void EventManager::RightButtonUp() {
 	_rightButton = false;
+}
+
+void EventManager::UpdateXboxController(float stickX, float stickY, bool connected,
+                                         bool leftTrigger, bool rightTrigger)
+{
+    _xboxStickX = stickX;
+    _xboxStickY = stickY;
+    _xboxConnected = connected;
+    _xboxLeftTrigger = leftTrigger;
+    _xboxRightTrigger = rightTrigger;
 }
 
 void EventManager::SetRelativeMouse(int _rx, int _ry) {

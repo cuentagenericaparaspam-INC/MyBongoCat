@@ -21,6 +21,12 @@ class Model;
 *         モデル生成と破棄、タップイベントの処理、モデル切り替えを行う。
 *
 */
+enum class TrackingDevice
+{
+    Mouse = 0,
+    XboxOne = 1
+};
+
 class Live2DManager
 {
 	struct ModelData {

@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include<thread>
+#include <atomic>
+#include <atomic>
 
 class Hook {
 public:
@@ -17,8 +19,11 @@ public:
 
 private:
 	void Run();
+	void PollXboxController();
+	void PollXboxController();
 
-	bool isExist;
+	std::atomic<bool> isExist;
+	std::thread *xboxThread;
 
 	static LRESULT CALLBACK KeyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 

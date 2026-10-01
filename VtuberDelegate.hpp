@@ -14,6 +14,7 @@
 class View;
 class LAppTextureManager;
 class Hook;
+enum class TrackingDevice;
 /**
 * @brief   アプリケーションクラス。
 *   Cubism SDK の管理を行う。

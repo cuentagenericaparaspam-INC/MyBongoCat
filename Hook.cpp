@@ -10,6 +10,8 @@
 #include<thread>
 #include"EventManager.hpp"
 #include <tchar.h>
+#include <Xinput.h>
+#include <algorithm>
 
 #ifndef HID_USAGE_PAGE_GENERIC
 #define HID_USAGE_PAGE_GENERIC ((USHORT)0x01)
@@ -329,20 +331,67 @@ LRESULT Hook::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-Hook::Hook() {}
+Hook::Hook() : isExist(false), m_hWnd(NULL), th(NULL), xboxThread(NULL) {}
 
-Hook::~Hook() {}
+Hook::~Hook()
+{
+    Stop();
+    if (th)
+    {
+        if (th->joinable()) th->join();
+        delete th;
+        th = NULL;
+    }
+    if (xboxThread)
+    {
+        if (xboxThread->joinable()) xboxThread->join();
+        delete xboxThread;
+        xboxThread = NULL;
+    }
+}
 
 void Hook::Strat() {
 	isExist = false;
 	th = new std::thread(&Hook::Run, this);
-	th->detach();
+	xboxThread = new std::thread(&Hook::PollXboxController, this);
 }
 
 void Hook::Stop() {
-	isExist = true;
+	if (isExist.exchange(true))
+		return;
 	UnhookWindowsHookEx(hhkLowLevelKybd);
 	UnhookWindowsHookEx(hhkLowLevelMs);
+	if (m_hWnd)
+		PostMessage(m_hWnd, WM_QUIT, 0, 0);
+}
+
+void Hook::PollXboxController()
+{
+	XINPUT_STATE state{};
+	while (!isExist)
+	{
+		ZeroMemory(&state, sizeof(XINPUT_STATE));
+		DWORD result = XInputGetState(0, &state);
+		EventManager *eventManager = VtuberDelegate::GetInstance()->GetView()->GetEventManager();
+		if (result == ERROR_SUCCESS)
+		{
+			const float deadZone = 0.12f;
+			float x = static_cast<float>(state.Gamepad.sThumbLX) / 32767.0f;
+			float y = static_cast<float>(state.Gamepad.sThumbLY) / 32767.0f;
+			if (fabsf(x) < deadZone) x = 0.0f;
+			if (fabsf(y) < deadZone) y = 0.0f;
+			x = std::max(-1.0f, std::min(1.0f, x));
+			y = std::max(-1.0f, std::min(1.0f, y));
+			const bool leftTrigger = state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+			const bool rightTrigger = state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+			eventManager->UpdateXboxController(x, y, true, leftTrigger, rightTrigger);
+		}
+		else
+		{
+			eventManager->UpdateXboxController(0.0f, 0.0f, false, false, false);
+		}
+		Sleep(8);
+	}
 }
 
 void Hook::Run() {

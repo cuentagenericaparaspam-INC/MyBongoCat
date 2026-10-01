@@ -54,7 +54,7 @@ void VtuberFrameWork::UpData(int id,double _x, double _y, int width, int height,
 			     bool _eyeBlink,const char *modelPath,bool _tarck,
 			     const char *mode, bool _live2d,
 			     bool relative_mouse, bool _isMouseHorizontalFlip,
-			     bool _isMouseVerticalFlip,bool _isUsemask)
+			     bool _isMouseVerticalFlip,bool _isUsemask, int trackingDevice)
 {
 
 	VtuberDelegate::GetInstance()->UpdataViewWindow(_x,_y,width, height,sc, id);
@@ -63,6 +63,7 @@ void VtuberFrameWork::UpData(int id,double _x, double _y, int width, int height,
 	VtuberDelegate::GetInstance()->ChangeModel(modelPath,id);
 	VtuberDelegate::GetInstance()->ChangeMode(mode, _live2d, _isUsemask,id);
 	VtuberDelegate::GetInstance()->ChangeMouseMovement(relative_mouse);
+	VtuberDelegate::GetInstance()->SetTrackingDevice(trackingDevice);
 }
 
 const char** VtuberFrameWork::GetModeDefine(int &_size) {

@@ -110,6 +110,13 @@ bool VtuberDelegate::Initialize(int id)
 
 void VtuberDelegate::Release()
 {
+        if (_hook)
+        {
+                _hook->Stop();
+                delete _hook;
+                _hook = NULL;
+        }
+
         //glfwDestroyWindow(_window);
 
         //glfwTerminate();
@@ -181,6 +188,12 @@ void VtuberDelegate::ChangeMode(const char *_mode,bool _live2d,bool _isUseMask, 
 
 void VtuberDelegate::ChangeMouseMovement(bool _mouse) {
 	Live2DManager::GetInstance()->ChangeMouseMovement(_mouse);
+}
+
+void VtuberDelegate::SetTrackingDevice(int device)
+{
+	Live2DManager::GetInstance()->SetTrackingDevice(
+		static_cast<TrackingDevice>(device));
 }
 
 

@@ -47,7 +47,8 @@ void Live2DManager::ReleaseInstance()
 
 Live2DManager::Live2DManager() :
 	_modelCounter(0),
-	_isUseRelativeMouse (false)
+	_isUseRelativeMouse (false),
+	_trackingDevice(TrackingDevice::Mouse)
 {
 
 }
@@ -87,28 +88,44 @@ void Live2DManager::OnUpdate(Csm::csmUint16 id) const
     EventManager *_eventmanager;
     _eventmanager = VtuberDelegate::GetInstance() ->GetView() ->GetEventManager();
 
-    int width, height;
-    Pal::GetDesktopResolution(width,height);
-    int px, py;
-    if (_isUseRelativeMouse) {
-	    VtuberDelegate::GetInstance()
-		    ->GetView()
-		    ->GetEventManager()
-		    ->GetRelativeMouse(px, py);
+    float mousex = 0.5f;
+    float mousey = 0.5f;
+    bool leftButton = false;
+    bool rightButton = false;
 
-	    _eventmanager->MouseEventMoved(width,height,
-					   px, py);
-	    px = _eventmanager->GetCenterX() - _eventmanager->GetStartX()+width/2;
-	    py = _eventmanager->GetCenterY() - _eventmanager->GetStartY() + height /2;
-
+    if (_trackingDevice == TrackingDevice::XboxOne) {
+        // Xbox One: the left analog stick is used as the tracking input.
+        // X maps left/right and Y is inverted so pushing up moves the gaze/head up.
+        if (_eventmanager->GetXboxConnected()) {
+            mousex = 0.5f + (_eventmanager->GetXboxStickX() * 0.5f);
+            mousey = 0.5f - (_eventmanager->GetXboxStickY() * 0.5f);
+            leftButton = _eventmanager->GetXboxLeftTrigger();
+            rightButton = _eventmanager->GetXboxRightTrigger();
+        }
     } else {
-	    VtuberDelegate::GetInstance()
-		    ->GetView()
-		    ->GetEventManager()
-		    ->GetCurrentMousePosition(px, py);
+        int width, height;
+        Pal::GetDesktopResolution(width,height);
+        int px, py;
+        if (_isUseRelativeMouse) {
+	        VtuberDelegate::GetInstance()
+		        ->GetView()
+		        ->GetEventManager()
+		        ->GetRelativeMouse(px, py);
+
+	        _eventmanager->MouseEventMoved(width,height, px, py);
+	        px = _eventmanager->GetCenterX() - _eventmanager->GetStartX()+width/2;
+	        py = _eventmanager->GetCenterY() - _eventmanager->GetStartY() + height /2;
+        } else {
+	        VtuberDelegate::GetInstance()
+		        ->GetView()
+		        ->GetEventManager()
+		        ->GetCurrentMousePosition(px, py);
+        }
+        mousex = static_cast<float>(px) / static_cast<float>(width);
+        mousey = static_cast<float>(py) / static_cast<float>(height);
+        leftButton = _eventmanager->GetLeftButton();
+        rightButton = _eventmanager->GetRightButton();
     }
-    float mousex = static_cast<float>(px) / static_cast<float>(width);
-    float mousey = static_cast<float>(py) / static_cast<float>(height);
 
     //update model view matrix
      CubismMatrix44 *_viewMatrix;
@@ -126,7 +143,7 @@ void Live2DManager::OnUpdate(Csm::csmUint16 id) const
 
 		model->UpdateTime();
 		model->UpdataSetting(_randomMotion , _delayTime,_isBreath , _isEyeBlink ,_isTrack ,_isMouseHorizontalFlip,_IsMouseVerticalFlip);
-		model->UpdateMouseState(mousex,mousey,_eventmanager->GetLeftButton(),_eventmanager->GetRightButton());
+		model->UpdateMouseState(mousex,mousey,leftButton,rightButton);
 		model->Update(id);
 		model->Draw(projection);
 
@@ -246,3 +263,9 @@ void Live2DManager::UpdateModelSetting(
 
 
 
+
+
+void Live2DManager::SetTrackingDevice(TrackingDevice device)
+{
+	_trackingDevice = device;
+}
