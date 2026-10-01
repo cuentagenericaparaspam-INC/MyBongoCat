@@ -88,6 +88,8 @@ public:
 
     void ChangeMouseMovement(bool _mouse);
 
+    void SetTrackingDevice(int device);
+
     GLuint CreateShader();
 
     bool CheckShader(GLuint shaderId);
