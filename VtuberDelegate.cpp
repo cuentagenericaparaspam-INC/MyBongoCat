@@ -183,6 +183,12 @@ void VtuberDelegate::ChangeMouseMovement(bool _mouse) {
 	Live2DManager::GetInstance()->ChangeMouseMovement(_mouse);
 }
 
+void VtuberDelegate::SetTrackingDevice(int device)
+{
+	Live2DManager::GetInstance()->SetTrackingDevice(
+		static_cast<TrackingDevice>(device));
+}
+
 
 void VtuberDelegate::ChangeModel(const char *ModelName, int id)
 {
