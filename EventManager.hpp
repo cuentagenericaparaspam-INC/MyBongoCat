@@ -40,6 +40,14 @@ public:
     bool GetKeySignal2(int i) { return _keyEvent[i].KeyBoardSignal; }
     bool GetRightButton() { return _rightButton; }
     bool GetLeftButton() { return _leftButton; }
+    float GetXboxStickX() const { return _xboxStickX; }
+    float GetXboxStickY() const { return _xboxStickY; }
+    bool GetXboxConnected() const { return _xboxConnected; }
+    bool GetXboxLeftTrigger() const { return _xboxLeftTrigger; }
+    bool GetXboxRightTrigger() const { return _xboxRightTrigger; }
+
+    void UpdateXboxController(float stickX, float stickY, bool connected,
+                              bool leftTrigger, bool rightTrigger);
 
     /*
     * @brief タッチ開始時イベント
