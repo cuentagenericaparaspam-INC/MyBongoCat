@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include<thread>
 #include <atomic>
+#include <atomic>
 
 class Hook {
 public:
@@ -18,6 +19,7 @@ public:
 
 private:
 	void Run();
+	void PollXboxController();
 	void PollXboxController();
 
 	std::atomic<bool> isExist;
