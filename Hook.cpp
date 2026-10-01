@@ -336,14 +336,24 @@ Hook::Hook() : isExist(false), m_hWnd(NULL), th(NULL), xboxThread(NULL) {}
 Hook::~Hook()
 {
     Stop();
+    if (th)
+    {
+        if (th->joinable()) th->join();
+        delete th;
+        th = NULL;
+    }
+    if (xboxThread)
+    {
+        if (xboxThread->joinable()) xboxThread->join();
+        delete xboxThread;
+        xboxThread = NULL;
+    }
 }
 
 void Hook::Strat() {
 	isExist = false;
 	th = new std::thread(&Hook::Run, this);
-	th->detach();
 	xboxThread = new std::thread(&Hook::PollXboxController, this);
-	xboxThread->detach();
 }
 
 void Hook::Stop() {
