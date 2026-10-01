@@ -153,4 +153,10 @@ private:
 
     int _relativemouseX;
     int _relativemouseY;
+
+    float _xboxStickX;
+    float _xboxStickY;
+    bool _xboxConnected;
+    bool _xboxLeftTrigger;
+    bool _xboxRightTrigger;
 };
