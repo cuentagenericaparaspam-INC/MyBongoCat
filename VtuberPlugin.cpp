@@ -43,13 +43,14 @@ void * VtuberPlugin::VtuberPlugin::VtuberCreate(obs_data_t *settings,
 	bool mouse_horizontal_flip =obs_data_get_bool(settings, "mouse_horizontal_flip");
 	bool mouse_vertical_flip =obs_data_get_bool(settings, "mouse_vertical_flip");
 	bool mask = obs_data_get_bool(settings, "mask");
+	int tracking_device = (int)obs_data_get_int(settings, "tracking_device");
 
 	VtuberFrameWork::InitVtuber(vtb->modelId);
 
 	VtuberFrameWork::UpData(vtb->modelId, x, y, width, height, scale,
 				delayTime, random_motion, breath, eyeblink,
 				NULL, track, mode, live2D, relative_mouse,
-				mouse_horizontal_flip, mouse_vertical_flip,mask);
+				mouse_horizontal_flip, mouse_vertical_flip,mask, tracking_device);
 	return vtb;
 }
 
@@ -114,6 +115,12 @@ static void fill_vtuber_model_list(obs_property_t *p, void *data)
 	
 
 }
+static void fill_tracking_device_list(obs_property_t *p)
+{
+	obs_property_list_add_int(p, "Mouse", 0);
+	obs_property_list_add_int(p, "Xbox One Controller", 1);
+}
+
 
 obs_properties_t * VtuberPlugin::VtuberPlugin::VtuberGetProperties(void *data)
 {
@@ -140,6 +147,9 @@ obs_properties_t * VtuberPlugin::VtuberPlugin::VtuberGetProperties(void *data)
 	//obs_properties_add_float_slider(ppts,"scale",obs_module_text("Scale"),0.1,10.0,0.1);
 	//obs_properties_add_float_slider(ppts, "x", obs_module_text("X"), -3.0, 3.0, 0.1);
 	//obs_properties_add_float_slider(ppts, "y", obs_module_text("Y"), -3.0, 3.0, 0.1);
+	p = obs_properties_add_list(ppts, "tracking_device", obs_module_text("Tracking Device"),
+				    OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+	fill_tracking_device_list(p);
 	obs_properties_add_bool(ppts, "relative_mouse", obs_module_text("Relative Mouse Movement"));
 	obs_properties_add_bool(ppts, "mouse_horizontal_flip", obs_module_text("Mouse Horizontal Flip"));
 	obs_properties_add_bool(ppts, "mouse_vertical_flip", obs_module_text("Mouse Vertical Flip"));
@@ -176,6 +186,7 @@ void VtuberPlugin::VtuberPlugin::Vtuber_update(
 	bool mouse_horizontal_flip =obs_data_get_bool(settings, "mouse_horizontal_flip");
 	bool mouse_vertical_flip =obs_data_get_bool(settings, "mouse_vertical_flip");
 	bool mask = obs_data_get_bool(settings, "mask");
+	int tracking_device = (int)obs_data_get_int(settings, "tracking_device");
 
 	const char *vtb_str = NULL; //obs_data_get_string(settings, "models_path");
 
@@ -183,7 +194,7 @@ void VtuberPlugin::VtuberPlugin::Vtuber_update(
 				delayTime, random_motion, breath, eyeblink,
 				vtb_str, track, mode, live2D, relative_mouse,
 				mouse_horizontal_flip, mouse_vertical_flip,
-				mask);
+				mask, tracking_device);
 }
 
 void VtuberPlugin::VtuberPlugin::Vtuber_defaults(
@@ -199,10 +210,11 @@ void VtuberPlugin::VtuberPlugin::Vtuber_defaults(
 	obs_data_set_default_bool(settings, "breath",true);
 	obs_data_set_default_bool(settings, "eyeblink",true);
 	obs_data_set_default_bool(settings, "track", true);
-	obs_data_set_default_string(settings, "Mode", "standard");
+	obs_data_set_default_string(settings, "mode", "standard");
 	obs_data_set_default_bool(settings, "live2d", true);
 	obs_data_set_default_bool(settings, "relative_mouse", false);
 	obs_data_set_default_bool(settings, "mouse_horizontal_flip",true);
 	obs_data_set_default_bool(settings, "mouse_vertical_flip",true);
 	obs_data_set_default_bool(settings, "mask", false);
+	obs_data_set_default_int(settings, "tracking_device", 0);
 }
