@@ -126,11 +126,11 @@ void EventManager::RightButtonUp() {
 void EventManager::UpdateXboxController(float stickX, float stickY, bool connected,
                                          bool leftTrigger, bool rightTrigger)
 {
-    _xboxStickX = stickX;
-    _xboxStickY = stickY;
-    _xboxConnected = connected;
-    _xboxLeftTrigger = leftTrigger;
-    _xboxRightTrigger = rightTrigger;
+    _xboxStickX.store(stickX);
+    _xboxStickY.store(stickY);
+    _xboxConnected.store(connected);
+    _xboxLeftTrigger.store(leftTrigger);
+    _xboxRightTrigger.store(rightTrigger);
 }
 
 void EventManager::SetRelativeMouse(int _rx, int _ry) {
