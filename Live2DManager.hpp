@@ -77,6 +77,8 @@ public:
 
     void ChangeMouseMovement(Csm::csmBool _mouse);
 
+    void SetTrackingDevice(TrackingDevice device);
+
     void UpdateModelSetting(Csm::csmBool randomMotion,
 			    Csm::csmFloat32 delayTime, Csm::csmBool isBreath,
 			    Csm::csmBool isEyeBlink,Csm::csmBool isTrack,
@@ -106,4 +108,5 @@ private:
     Csm::csmBool _isTrack;
     Csm::csmBool _isMouseHorizontalFlip;
     Csm::csmBool _IsMouseVerticalFlip;
+    TrackingDevice _trackingDevice;
 };
