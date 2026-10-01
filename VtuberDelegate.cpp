@@ -110,6 +110,13 @@ bool VtuberDelegate::Initialize(int id)
 
 void VtuberDelegate::Release()
 {
+        if (_hook)
+        {
+                _hook->Stop();
+                delete _hook;
+                _hook = NULL;
+        }
+
         //glfwDestroyWindow(_window);
 
         //glfwTerminate();
