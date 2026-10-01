@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include<thread>
+#include <atomic>
 
 class Hook {
 public:
